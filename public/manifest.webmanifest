@@ -1,0 +1,17 @@
+{
+  "name": "AgriSentinel — Digital Farm Biosecurity Portal",
+  "short_name": "AgriSentinel",
+  "description": "Offline-capable farm biosecurity management for farmers and veterinarians",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#154D38",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
