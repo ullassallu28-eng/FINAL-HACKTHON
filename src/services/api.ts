@@ -440,10 +440,17 @@ export const correctiveActionService = {
     }
   },
 
-  async verifyAction(actionId: string, approved: boolean, notes?: string): Promise<CorrectiveAction> {
+  async verifyAction(
+    actionId: string,
+    approved: boolean,
+    notes?: string,
+    decision?: "confirm" | "reject" | "request_more"
+  ): Promise<CorrectiveAction> {
     const result = await apiFetch<CorrectiveAction>(`/corrective-actions/${actionId}/verify`, {
       method: "POST",
-      body: JSON.stringify({ approved, notes }),
+      // `action` lets the backend distinguish Reject vs Request More Evidence.
+      // `approved` is kept for backward compatibility with older API builds.
+      body: JSON.stringify({ approved, notes, action: decision }),
     });
     invalidateApiCache("/corrective-actions");
     invalidateApiCache("/farms");

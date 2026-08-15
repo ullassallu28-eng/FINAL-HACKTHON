@@ -8,12 +8,19 @@ function normalizeText(value: string): string {
 }
 
 export function getVetDecisionStatus(notification: NotificationItem): VetDecisionStatus | null {
-  if (notification.type !== "verification") return null;
-
   const title = notification.title.trim();
   const message = notification.message.trim();
   const titleUpper = title.toUpperCase();
   const combined = normalizeText(`${title} ${message}`);
+
+  // Corrective-action evidence decisions from the veterinarian verify flow.
+  // These carry types "evidence"/"corrective", so they are matched by their
+  // exact titles before the "verification"-only gate below.
+  if (titleUpper === "EVIDENCE VERIFIED") return "confirmed";
+  if (titleUpper === "EVIDENCE REJECTED") return "rejected";
+  if (titleUpper === "MORE EVIDENCE REQUIRED") return "more_info";
+
+  if (notification.type !== "verification") return null;
 
   if (titleUpper.startsWith("REJECTED") || titleUpper.startsWith("अस्वीकृत")) {
     return "rejected";

@@ -57,3 +57,7 @@ class CorrectiveActionCreate(CamelModel):
 class ActionVerifyRequest(CamelModel):
     approved: bool
     notes: str | None = None
+    # Optional explicit decision so the veterinarian's three distinct choices
+    # (Confirm Evidence / Reject Evidence / Request More Evidence) can be told
+    # apart. Backward compatible: when omitted, `approved` is used to derive it.
+    action: str | None = None

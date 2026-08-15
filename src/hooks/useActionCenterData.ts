@@ -50,7 +50,9 @@ export function useActionCenterData(farmId: string, role: UserRole): ActionCente
         farmService.getChecklist(farmId).catch(() => []),
         incidentService.getIncidents(farmId, { force: true }).catch(() => []),
         correctiveActionService.getActions(farmId).catch(() => []),
-        notificationService.getNotifications(role, { force: true }).catch(() => []),
+        // Reuse the shared notification cache (10s TTL, invalidated on writes and
+        // refreshed by the global 15s poll) instead of forcing a duplicate request.
+        notificationService.getNotifications(role).catch(() => []),
       ])
         .then(([farm, summary, history, checklist, incidents, actions, notifications]) => {
           if (!cancelled) {

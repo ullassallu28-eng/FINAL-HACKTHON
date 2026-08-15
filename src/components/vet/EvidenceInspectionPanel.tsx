@@ -36,19 +36,30 @@ export const EvidenceInspectionPanel: React.FC = () => {
 
   const selected = actions.find((a) => a.id === selectedId) ?? null;
 
-  const handleVerify = async (approved: boolean) => {
+  const handleVerify = async (
+    decision: "confirm" | "reject" | "request_more",
+    noteOverride?: string
+  ) => {
     if (!selected) return;
+    const approved = decision === "confirm";
+    const note = noteOverride ?? vetNote;
     setProcessing(true);
     setMessage("");
     try {
-      await correctiveActionService.verifyAction(selected.id, approved, vetNote || undefined);
+      await correctiveActionService.verifyAction(selected.id, approved, note || undefined, decision);
       if (selected.farmId) {
         await riskService.recalculateFarm(selected.farmId).catch(() => undefined);
       }
       await refreshFarms();
       await refreshNotifications();
       setVetNote("");
-      setMessage(approved ? "Evidence confirmed — corrective action closed." : "Evidence rejected — farmer must resubmit.");
+      setMessage(
+        decision === "confirm"
+          ? "Evidence confirmed — corrective action closed."
+          : decision === "request_more"
+            ? "Requested more evidence — farmer notified to resubmit."
+            : "Evidence rejected — farmer must resubmit."
+      );
       setSelectedId(null);
       await load();
     } catch (err) {
@@ -139,21 +150,23 @@ export const EvidenceInspectionPanel: React.FC = () => {
               />
 
               <div className="action-button-group">
-                <button className="btn-action-validate" disabled={processing} onClick={() => handleVerify(true)}>
+                <button className="btn-action-validate" disabled={processing} onClick={() => handleVerify("confirm")}>
                   <CheckCircle size={16} />
                   Confirm Evidence
                 </button>
-                <button className="btn-action-reject" disabled={processing} onClick={() => handleVerify(false)}>
+                <button className="btn-action-reject" disabled={processing} onClick={() => handleVerify("reject")}>
                   <XCircle size={16} />
                   Reject Evidence
                 </button>
                 <button
                   className="btn-action-request"
                   disabled={processing}
-                  onClick={() => {
-                    setVetNote((n) => n || "Please submit additional photographic evidence showing completed work.");
-                    handleVerify(false);
-                  }}
+                  onClick={() =>
+                    handleVerify(
+                      "request_more",
+                      vetNote || "Please submit additional photographic evidence showing completed work."
+                    )
+                  }
                 >
                   <HelpCircle size={16} />
                   Request More Evidence

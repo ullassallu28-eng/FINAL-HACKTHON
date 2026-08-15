@@ -108,7 +108,7 @@ export const CorrectiveActionsList: React.FC = () => {
   const handleVerify = async (actionId: string, approve: boolean, notes?: string) => {
     try {
       const action = actions.find((a) => a.id === actionId);
-      await correctiveActionService.verifyAction(actionId, approve, notes);
+      await correctiveActionService.verifyAction(actionId, approve, notes, approve ? "confirm" : "reject");
       const farmId = role === "farmer" ? activeFarm.id : action?.farmId;
       if (farmId) {
         await riskService.recalculateFarm(farmId).catch(() => undefined);

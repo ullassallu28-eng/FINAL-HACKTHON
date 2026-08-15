@@ -116,13 +116,17 @@ export const VetEvidenceInspectionView: React.FC = () => {
     };
   }, [selected?.id, displayEvidence?.fileUrl, displayEvidence?.fileName]);
 
-  const handleVerify = async (approved: boolean, noteOverride?: string) => {
+  const handleVerify = async (
+    decision: "confirm" | "reject" | "request_more",
+    noteOverride?: string
+  ) => {
     if (!selected) return;
+    const approved = decision === "confirm";
     const note = noteOverride ?? vetNote;
     setProcessing(true);
     setMessage("");
     try {
-      await correctiveActionService.verifyAction(selected.id, approved, note || undefined);
+      await correctiveActionService.verifyAction(selected.id, approved, note || undefined, decision);
       if (selected.farmId) {
         await riskService.recalculateFarm(selected.farmId).catch(() => undefined);
       }
@@ -130,9 +134,11 @@ export const VetEvidenceInspectionView: React.FC = () => {
       await refreshNotifications();
       setVetNote("");
       setMessage(
-        approved
+        decision === "confirm"
           ? "Evidence confirmed. Corrective action closed. Farmer notified."
-          : "Evidence rejected. Farmer must upload new evidence."
+          : decision === "request_more"
+            ? "Requested more evidence. Farmer notified to resubmit."
+            : "Evidence rejected. Farmer notified to upload new evidence."
       );
       await load();
     } catch (err) {
@@ -347,7 +353,7 @@ export const VetEvidenceInspectionView: React.FC = () => {
                   type="button"
                   className="btn-action-validate"
                   disabled={processing || !displayEvidence}
-                  onClick={() => handleVerify(true)}
+                  onClick={() => handleVerify("confirm")}
                 >
                   <CheckCircle size={16} />
                   Confirm Evidence
@@ -356,7 +362,7 @@ export const VetEvidenceInspectionView: React.FC = () => {
                   type="button"
                   className="btn-action-reject"
                   disabled={processing || !displayEvidence}
-                  onClick={() => handleVerify(false)}
+                  onClick={() => handleVerify("reject")}
                 >
                   <XCircle size={16} />
                   Reject Evidence
@@ -367,7 +373,7 @@ export const VetEvidenceInspectionView: React.FC = () => {
                   disabled={processing || !displayEvidence}
                   onClick={() =>
                     handleVerify(
-                      false,
+                      "request_more",
                       vetNote ||
                         "Please submit additional photographic evidence clearly showing the completed corrective work."
                     )

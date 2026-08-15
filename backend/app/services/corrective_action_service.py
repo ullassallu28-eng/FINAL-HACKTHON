@@ -183,7 +183,23 @@ class CorrectiveActionService:
         farm = action.farm
         vet_name = user.full_name if user else "District Veterinary Officer"
 
-        if payload.approved:
+        # Determine the veterinarian's decision. An explicit `action` value takes
+        # precedence so "Reject Evidence" and "Request More Evidence" can be told
+        # apart; otherwise fall back to the boolean `approved` flag (older clients).
+        decision = (payload.action or "").strip().lower()
+        if decision not in ("confirm", "reject", "request_more"):
+            decision = "confirm" if payload.approved else "reject"
+
+        # Shared context appended to the farmer notification so it carries the
+        # Farm, Corrective action, Incident and Veterinarian note where available.
+        context_bits = [f"Farm: {farm.name}", f"Action: {action.title}"]
+        if action.incident_id:
+            context_bits.append(f"Incident: {action.incident_id}")
+        if payload.notes:
+            context_bits.append(f"Vet note: {payload.notes}")
+        context = " · ".join(context_bits)
+
+        if decision == "confirm":
             action.status = CorrectiveActionStatus.CLOSED
             action.verification_status = VerificationStatus.VERIFIED
             if action.evidence and payload.notes:
@@ -198,16 +214,35 @@ class CorrectiveActionService:
             CorrectiveActionService._check_compliance_closure(db, action.farm_id)
             NotificationService.create(
                 db,
-                title="Corrective Action Verified",
+                title="Evidence Verified",
                 message=(
-                    f"'{action.title}' verified by {vet_name}. "
-                    f"Biosecurity score: {farm.biosecurity_score}/100."
+                    "Your corrective action evidence has been verified by the veterinarian. "
+                    f"{context}"
                 ),
-                notification_type=NotificationType.CORRECTIVE,
+                notification_type=NotificationType.EVIDENCE,
                 target_role=UserRole.FARMER,
                 action_url="/actions",
             )
-        else:
+        elif decision == "request_more":
+            action.status = CorrectiveActionStatus.IN_PROGRESS
+            action.verification_status = VerificationStatus.UNVERIFIED
+            if action.evidence and payload.notes:
+                action.evidence.notes = (
+                    f"{action.evidence.notes or ''}\n\nVeterinary request for more evidence: {payload.notes}".strip()
+                )
+            NotificationService.create(
+                db,
+                title="More Evidence Required",
+                message=(
+                    "Additional evidence is required for your corrective action. "
+                    "Please review the veterinarian's request and resubmit. "
+                    f"{context}"
+                ),
+                notification_type=NotificationType.EVIDENCE,
+                target_role=UserRole.FARMER,
+                action_url="/actions",
+            )
+        else:  # reject
             action.status = CorrectiveActionStatus.IN_PROGRESS
             action.verification_status = VerificationStatus.UNVERIFIED
             if action.evidence and payload.notes:
@@ -216,10 +251,11 @@ class CorrectiveActionService:
                 )
             NotificationService.create(
                 db,
-                title="Evidence Requires Resubmission",
+                title="Evidence Rejected",
                 message=(
-                    f"Evidence for '{action.title}' was not accepted. "
-                    f"{payload.notes or 'Please upload clearer evidence.'}"
+                    "Your corrective action evidence was rejected by the veterinarian. "
+                    "Please review the feedback and resubmit. "
+                    f"{context}"
                 ),
                 notification_type=NotificationType.EVIDENCE,
                 target_role=UserRole.FARMER,
