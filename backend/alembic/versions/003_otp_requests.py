@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 revision = "003_otp_requests"
-down_revision = "002"
+down_revision = "002_file_content"
 branch_labels = None
 depends_on = None
 
