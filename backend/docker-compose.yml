@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bioshield-postgres
+    environment:
+      POSTGRES_USER: bioshield
+      POSTGRES_PASSWORD: bioshield
+      POSTGRES_DB: bioshield
+    ports:
+      - "5432:5432"
+    volumes:
+      - bioshield_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bioshield -d bioshield"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  bioshield_pg_data:

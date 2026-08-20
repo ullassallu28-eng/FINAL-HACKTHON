@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary-forest: #154D38;
+  --primary-forest-hover: #0F3A2A;
+  --accent-gold: #D97706;
+  --accent-gold-bg: #FEF3C7;
+  --risk-red: #DC2626;
+  --risk-red-bg: #FEE2E2;
+  --bg-slate: #F8FAFC;
+  --border-slate: #E2E8F0;
+  --text-dark: #0F172A;
+  --text-muted: #64748B;
+
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  color: var(--text-dark);
+  background-color: var(--bg-slate);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  background-color: var(--bg-slate);
+  color: var(--text-dark);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+select, input, textarea {
+  font-family: inherit;
+}

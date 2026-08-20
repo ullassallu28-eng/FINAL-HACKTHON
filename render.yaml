@@ -1,0 +1,44 @@
+# AgriSentinel — Render Blueprint (optional one-click deploy)
+# Dashboard → New → Blueprint → connect repo BACKEND-FARM-
+# Or create Postgres + Web Service manually using DEPLOYMENT_GUIDE.md
+
+databases:
+  - name: agrisentinel-db
+    plan: free
+    databaseName: agrisentinel
+    user: agrisentinel
+
+services:
+  - type: web
+    name: agrisentinel-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agrisentinel-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: DEBUG
+        value: "false"
+      - key: APP_ENV
+        value: production
+      - key: APP_NAME
+        value: AgriSentinel API
+      - key: CORS_ORIGINS
+        value: https://backend-farm-mn77.vercel.app,https://backend-farm-mdws.vercel.app,http://localhost:5173
+      - key: UPLOAD_DIR
+        value: uploads
+      - key: DEFAULT_DISTRICT_ID
+        value: district-ranchi
+      - key: PUBLIC_API_URL
+        value: https://agrisentinel-api.onrender.com

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AgriSentinel — SIH Hackathon 2026 Feature List</title>
+  <style>
+    @page { margin: 18mm 16mm; size: A4; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #1e293b;
+      line-height: 1.5;
+      font-size: 11pt;
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .cover {
+      text-align: center;
+      padding: 40px 20px 30px;
+      border-bottom: 4px solid #154D38;
+      margin-bottom: 24px;
+    }
+    .cover h1 {
+      color: #154D38;
+      font-size: 28pt;
+      margin: 0 0 8px;
+    }
+    .cover .subtitle {
+      font-size: 14pt;
+      color: #475569;
+      margin-bottom: 16px;
+    }
+    .cover .meta {
+      font-size: 10pt;
+      color: #64748b;
+    }
+    h2 {
+      color: #154D38;
+      font-size: 16pt;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-top: 28px;
+      page-break-after: avoid;
+    }
+    h3 {
+      color: #0f172a;
+      font-size: 12pt;
+      margin-top: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px;
+      font-size: 10pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #154D38;
+      color: white;
+      font-weight: 700;
+    }
+    tr:nth-child(even) { background: #f8fafc; }
+    ul { margin: 8px 0 16px; padding-left: 22px; }
+    li { margin-bottom: 4px; }
+    .links-box {
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 16px 0;
+    }
+    .workflow {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: Consolas, monospace;
+      font-size: 9.5pt;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 36px;
+      padding-top: 16px;
+      border-top: 2px solid #e2e8f0;
+      color: #64748b;
+      font-size: 10pt;
+    }
+    .status-live { color: #166534; font-weight: 700; }
+    .status-planned { color: #92400e; font-weight: 700; }
+    @media print {
+      body { padding: 0; }
+      h2 { page-break-before: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cover">
+    <h1>AgriSentinel</h1>
+    <div class="subtitle">Digital Farm Management Portal for Biosecurity<br>in Pig &amp; Poultry Farms</div>
+    <div class="meta">
+      <strong>SIH Hackathon 2026</strong> &nbsp;|&nbsp; Problem Statement: <strong>SIH260487</strong><br>
+      Feature List &amp; Project Capabilities Document — August 2026
+    </div>
+  </div>
+
+  <div class="links-box">
+    <strong>Live Demo Links</strong><br><br>
+    Website: <strong>https://backend-farm-mdws.vercel.app</strong><br>
+    API: https://agrisentinel-api.onrender.com<br>
+    API Docs: https://agrisentinel-api.onrender.com/docs<br>
+    GitHub: https://github.com/ullassallu28-eng/BACKEND-FARM-
+  </div>
+
+  <h2>1. Executive Summary</h2>
+  <p>AgriSentinel is a full-stack Digital Farm Biosecurity Portal for pig and poultry farms. It provides a closed-loop system covering farm registration, biosecurity assessment, risk monitoring, incident reporting, veterinary verification, corrective actions, and government oversight through GIS mapping.</p>
+  <p>The platform supports three user roles — <strong>Farmer</strong>, <strong>Veterinarian</strong>, and <strong>Government Officer</strong> — connected to a central PostgreSQL database via a FastAPI backend deployed on Render, with the React frontend on Vercel.</p>
+
+  <h2>2. Problem Statement Alignment (SIH260487)</h2>
+  <table>
+    <tr><th>SIH Requirement</th><th>AgriSentinel Solution</th></tr>
+    <tr><td>Digital farm management for pig &amp; poultry farms</td><td>Multi-farm portal with poultry, pig, and mixed farm types</td></tr>
+    <tr><td>Biosecurity monitoring &amp; compliance</td><td>Biosecurity score, digital passport, daily checklist</td></tr>
+    <tr><td>Incident reporting &amp; outbreak control</td><td>Incident form with photo evidence; vet verification workflow</td></tr>
+    <tr><td>Risk assessment &amp; analytics</td><td>Rule-based risk engine with factors and score history</td></tr>
+    <tr><td>Role-based multi-stakeholder access</td><td>Farmer, Veterinarian, and Government Officer portals</td></tr>
+    <tr><td>Corrective actions &amp; evidence tracking</td><td>Action list with evidence upload and verification</td></tr>
+    <tr><td>Regional / district oversight</td><td>Officer dashboard and GIS farm map</td></tr>
+    <tr><td>Closed-loop biosecurity response</td><td>Incident → Verify → Corrective Action → Score Update</td></tr>
+  </table>
+
+  <h2>3. Role-Based Features</h2>
+
+  <h3>3.1 Farmer Portal</h3>
+  <ul>
+    <li>Farm dashboard with biosecurity score (0–100) and risk level (Safe / Caution / Critical)</li>
+    <li>Multi-farm selection across registered poultry and pig farms</li>
+    <li>Routine biosecurity verification checklist</li>
+    <li>Report health incidents with category, animal details, location, symptoms, and photo upload</li>
+    <li>Recent farm incident log on dashboard</li>
+    <li>Digital Biosecurity Passport with component scores and inspection history</li>
+    <li>Risk analytics dashboard showing active risk factors</li>
+    <li>Corrective actions with compliance evidence submission</li>
+    <li>Aarohi AI Biosecurity Advisor — contextual tips from live risk data</li>
+    <li>Real-time notifications for incidents and verifications</li>
+  </ul>
+
+  <h3>3.2 Veterinarian Portal</h3>
+  <ul>
+    <li>District Veterinary Verification Queue</li>
+    <li>Review incident reports with farm and health details</li>
+    <li>Inspect uploaded diagnostic evidence (photos/documents)</li>
+    <li>Validate incidents — auto-generates corrective actions</li>
+    <li>Request additional information or reject non-critical reports</li>
+    <li>Add veterinary inspection notes</li>
+    <li>Workflow tracking: Reported → Under Review → Verified / Rejected</li>
+  </ul>
+
+  <h3>3.3 Government Officer Portal</h3>
+  <ul>
+    <li>District field command overview</li>
+    <li>Regional farm statistics and inspection priority list</li>
+    <li>GIS farm map with location-based risk indicators</li>
+    <li>Identify high-risk farms requiring field inspection</li>
+    <li>Cross-farm biosecurity oversight for the district</li>
+  </ul>
+
+  <h2>4. Core Platform Modules</h2>
+  <table>
+    <tr><th>#</th><th>Module</th><th>Description</th><th>Status</th></tr>
+    <tr><td>1</td><td>Farm Registration</td><td>Farm ID, owner, type, location, population</td><td class="status-live">Live</td></tr>
+    <tr><td>2</td><td>Biosecurity Passport</td><td>Digital passport with scores, QR, compliance status</td><td class="status-live">Live</td></tr>
+    <tr><td>3</td><td>Biosecurity Assessment</td><td>Hygiene, visitor control, quarantine, waste scores</td><td class="status-live">Live</td></tr>
+    <tr><td>4</td><td>Risk Engine</td><td>Rule-based scoring from incidents and farm factors</td><td class="status-live">Live</td></tr>
+    <tr><td>5</td><td>Incident Reporting</td><td>Form with photo/document evidence upload</td><td class="status-live">Live</td></tr>
+    <tr><td>6</td><td>Vet Verification</td><td>Validate, reject, or request info on incidents</td><td class="status-live">Live</td></tr>
+    <tr><td>7</td><td>Corrective Actions</td><td>Auto-generated actions with evidence tracking</td><td class="status-live">Live</td></tr>
+    <tr><td>8</td><td>Checklist</td><td>Daily biosecurity verification tasks</td><td class="status-live">Live</td></tr>
+    <tr><td>9</td><td>GIS Mapping</td><td>Geographic farm nodes with risk context</td><td class="status-live">Live</td></tr>
+    <tr><td>10</td><td>Notifications</td><td>Role-based alerts and updates</td><td class="status-live">Live</td></tr>
+    <tr><td>11</td><td>Authentication</td><td>JWT login for Farmer, Vet, Officer</td><td class="status-live">Live</td></tr>
+    <tr><td>12</td><td>Aarohi AI Advisor</td><td>Rule-based biosecurity guidance</td><td class="status-live">Live</td></tr>
+    <tr><td>13</td><td>Health Records API</td><td>Farm health record endpoints</td><td class="status-live">Backend Ready</td></tr>
+    <tr><td>14</td><td>Spatial Risk API</td><td>Nearby farm risk analysis</td><td class="status-live">Backend Ready</td></tr>
+  </table>
+
+  <h2>5. Closed-Loop Biosecurity Workflow</h2>
+  <div class="workflow">Farm Registration
+       ↓
+Biosecurity Assessment &amp; Score Calculation
+       ↓
+Continuous Monitoring (Checklist + Risk Factors)
+       ↓
+Health Incident Reported (with Photo Evidence)
+       ↓
+Veterinary Verification Queue
+       ↓
+Validate / Reject / Request More Information
+       ↓
+Corrective Actions Auto-Generated
+       ↓
+Farmer Submits Compliance Evidence
+       ↓
+Biosecurity Score Updated
+       ↓
+Government Officer — GIS &amp; District Overview</div>
+
+  <h2>6. Technology Stack</h2>
+  <table>
+    <tr><th>Layer</th><th>Technology</th></tr>
+    <tr><td>Frontend</td><td>React 19, TypeScript, Vite</td></tr>
+    <tr><td>Backend API</td><td>FastAPI (Python) — 40+ REST endpoints</td></tr>
+    <tr><td>Database</td><td>PostgreSQL with Alembic migrations</td></tr>
+    <tr><td>Authentication</td><td>JWT (JSON Web Tokens)</td></tr>
+    <tr><td>Website Hosting</td><td>Vercel</td></tr>
+    <tr><td>API &amp; DB Hosting</td><td>Render Cloud</td></tr>
+    <tr><td>Repository</td><td>GitHub — BACKEND-FARM- (Monorepo)</td></tr>
+  </table>
+
+  <h2>7. Team Responsibilities</h2>
+  <table>
+    <tr><th>Team Member</th><th>Responsibility</th></tr>
+    <tr><td>Backend / API</td><td>FastAPI, deployment, API integration, workflows</td></tr>
+    <tr><td>Database</td><td>PostgreSQL schema, migrations, seed data, real farm imports</td></tr>
+    <tr><td>AI / ML</td><td>Image disease detection, medicine recommendations (planned)</td></tr>
+    <tr><td>Frontend</td><td>React UI integrated with live API</td></tr>
+    <tr><td>IoT</td><td>Sensor telemetry integration (planned)</td></tr>
+  </table>
+
+  <h2>8. Future Enhancements</h2>
+  <table>
+    <tr><th>Feature</th><th>Status</th></tr>
+    <tr><td>AI image diagnosis from uploaded photos</td><td class="status-planned">Planned (AI Team)</td></tr>
+    <tr><td>Automated medicine recommendations</td><td class="status-planned">Planned (AI Team)</td></tr>
+    <tr><td>Live IoT sensor feeds</td><td class="status-planned">Planned (IoT Team)</td></tr>
+    <tr><td>Real Jharkhand farm database import</td><td class="status-planned">In Progress (DB Team)</td></tr>
+    <tr><td>SMS / WhatsApp farmer alerts</td><td class="status-planned">Future Enhancement</td></tr>
+  </table>
+
+  <h2>9. Demo Script for Judges (2–3 Minutes)</h2>
+  <ol>
+    <li><strong>Farmer</strong> — Dashboard, biosecurity score, checklist</li>
+    <li><strong>Report Incident</strong> — Upload photo, submit report</li>
+    <li><strong>Veterinarian</strong> — Verification queue, validate incident</li>
+    <li><strong>Corrective Actions</strong> — Show auto-generated farmer tasks</li>
+    <li><strong>Government Officer</strong> — GIS map and district overview</li>
+    <li><strong>Aarohi Advisor</strong> — AI biosecurity tips</li>
+    <li><strong>Biosecurity Passport</strong> — Digital passport modal</li>
+  </ol>
+
+  <h2>10. Key Differentiators</h2>
+  <ul>
+    <li>Full-stack live cloud deployment — not a static prototype</li>
+    <li>True multi-role workflow sharing one database</li>
+    <li>Evidence-based incident reporting with photo upload</li>
+    <li>Closed-loop design from incident to corrective action</li>
+    <li>Modular API ready for AI, IoT, and real farm data</li>
+    <li>Directly aligned with SIH260487 problem statement</li>
+  </ul>
+
+  <div class="footer">
+    <strong>AgriSentinel</strong> — Protecting Farms, Securing Food Supply<br>
+    SIH Hackathon 2026 | Problem Statement SIH260487
+  </div>
+
+</body>
+</html>
