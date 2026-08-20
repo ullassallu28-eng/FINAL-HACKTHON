@@ -20,28 +20,28 @@ const ROLE_TABS: Array<{
   portalLabel: string;
   dbRole: string; // matches the value returned by the backend
 }> = [
-  {
-    role: "farmer",
-    label: "Farmer",
-    icon: <UserCheck size={18} />,
-    portalLabel: "Farmer Portal",
-    dbRole: "farmer",
-  },
-  {
-    role: "veterinarian",
-    label: "Veterinarian",
-    icon: <Stethoscope size={18} />,
-    portalLabel: "Veterinarian Portal",
-    dbRole: "veterinarian",
-  },
-  {
-    role: "officer",
-    label: "Govt Officer",
-    icon: <Landmark size={18} />,
-    portalLabel: "Government Officer Portal",
-    dbRole: "officer",
-  },
-];
+    {
+      role: "farmer",
+      label: "Farmer",
+      icon: <UserCheck size={18} />,
+      portalLabel: "Farmer Portal",
+      dbRole: "farmer",
+    },
+    {
+      role: "veterinarian",
+      label: "Veterinarian",
+      icon: <Stethoscope size={18} />,
+      portalLabel: "Veterinarian Portal",
+      dbRole: "veterinarian",
+    },
+    {
+      role: "officer",
+      label: "Govt Officer",
+      icon: <Landmark size={18} />,
+      portalLabel: "Government Officer Portal",
+      dbRole: "officer",
+    },
+  ];
 
 export const LoginPage: React.FC = () => {
   const { loginWithCredentials, logout } = useAuth();
