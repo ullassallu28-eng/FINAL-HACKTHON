@@ -75,34 +75,43 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         )}
 
-        <button
-          className={`sidebar-link ${activeTab === "passport" ? "active" : ""}`}
-          onClick={() => {
-            setActiveTab("passport");
-            onOpenPassport();
-          }}
-        >
-          <FileBadge size={18} />
-          <span>{t("nav.passport")}</span>
-        </button>
+        {/* Biosecurity Passport: Farmer and Vet only — hidden from Officer */}
+        {role !== "officer" && (
+          <button
+            className={`sidebar-link ${activeTab === "passport" ? "active" : ""}`}
+            onClick={() => {
+              setActiveTab("passport");
+              onOpenPassport();
+            }}
+          >
+            <FileBadge size={18} />
+            <span>{t("nav.passport")}</span>
+          </button>
+        )}
 
-        <button
-          className={`sidebar-link ${activeTab === "risk" ? "active" : ""}`}
-          onClick={() => setActiveTab("risk")}
-        >
-          <AlertTriangle size={18} />
-          <span>{t("nav.risk")}</span>
-        </button>
+        {/* Risk Analytics: Farmer and Vet only — hidden from Officer */}
+        {role !== "officer" && (
+          <button
+            className={`sidebar-link ${activeTab === "risk" ? "active" : ""}`}
+            onClick={() => setActiveTab("risk")}
+          >
+            <AlertTriangle size={18} />
+            <span>{t("nav.risk")}</span>
+          </button>
+        )}
 
-        <button
-          className={`sidebar-link ${activeTab === "incident" ? "active" : ""}`}
-          onClick={() => setActiveTab("incident")}
-        >
-          <ShieldAlert size={18} />
-          <span>
-            {role === "veterinarian" ? t("nav.incident.vet") : t("nav.incident")}
-          </span>
-        </button>
+        {/* Report & Track Incident: Farmer and Vet only — hidden from Officer */}
+        {role !== "officer" && (
+          <button
+            className={`sidebar-link ${activeTab === "incident" ? "active" : ""}`}
+            onClick={() => setActiveTab("incident")}
+          >
+            <ShieldAlert size={18} />
+            <span>
+              {role === "veterinarian" ? t("nav.incident.vet") : t("nav.incident")}
+            </span>
+          </button>
+        )}
 
         {role === "veterinarian" && (
           <button
@@ -114,13 +123,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         )}
 
-        <button
-          className={`sidebar-link ${activeTab === "actions" ? "active" : ""}`}
-          onClick={() => setActiveTab("actions")}
-        >
-          <CheckSquare size={18} />
-          <span>{t("nav.actions")}</span>
-        </button>
+        {/* Corrective Actions: Farmer and Vet only — hidden from Officer */}
+        {role !== "officer" && (
+          <button
+            className={`sidebar-link ${activeTab === "actions" ? "active" : ""}`}
+            onClick={() => setActiveTab("actions")}
+          >
+            <CheckSquare size={18} />
+            <span>{t("nav.actions")}</span>
+          </button>
+        )}
 
         <button
           className={`sidebar-link ${activeTab === "gis" ? "active" : ""}`}

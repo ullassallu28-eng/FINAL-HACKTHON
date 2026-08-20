@@ -62,7 +62,8 @@ const TABS_BY_ROLE: Record<UserRole, NavTab[]> = {
     "actions",
     "gis",
   ],
-  officer: ["overview", "passport", "risk", "incident", "actions", "gis", "officer"],
+  // Officer portal: NO passport, risk analytics, report incident, or corrective actions
+  officer: ["overview", "gis", "officer"],
 };
 
 function AppContent() {
@@ -143,7 +144,8 @@ function AppContent() {
             </ErrorBoundary>
           )}
 
-          {effectiveTab === "passport" && (
+          {/* passport tab: only Farmer and Vet — NOT Officer */}
+          {effectiveTab === "passport" && !canViewOfficer && (
             <FarmerDashboard
               onOpenPassport={() => setIsPassportOpen(true)}
               onOpenReportIncident={() => setIsReportIncidentOpen(true)}
@@ -173,7 +175,8 @@ function AppContent() {
             )
           )}
 
-          {effectiveTab === "risk" && (
+          {/* risk tab: only Farmer and Vet — NOT Officer */}
+          {effectiveTab === "risk" && !canViewOfficer && (
             <ErrorBoundary>
               <Suspense fallback={<TabLoadingFallback />}>
                 <RiskDashboard />
@@ -181,7 +184,8 @@ function AppContent() {
             </ErrorBoundary>
           )}
 
-          {effectiveTab === "incident" && (
+          {/* incident tab: only Farmer and Vet — NOT Officer */}
+          {effectiveTab === "incident" && !canViewOfficer && (
             <ErrorBoundary>
               <Suspense fallback={<TabLoadingFallback />}>
                 {/* Role-gated: vets see their verification queue; farmers see their incidents */}
@@ -200,7 +204,8 @@ function AppContent() {
             </ErrorBoundary>
           )}
 
-          {effectiveTab === "actions" && (
+          {/* actions tab: only Farmer and Vet — NOT Officer */}
+          {effectiveTab === "actions" && !canViewOfficer && (
             <ErrorBoundary>
               <Suspense fallback={<TabLoadingFallback />}>
                 <CorrectiveActionsList />

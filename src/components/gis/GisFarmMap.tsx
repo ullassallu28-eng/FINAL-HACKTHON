@@ -130,8 +130,10 @@ export const GisFarmMap: React.FC<GisFarmMapProps> = ({ onOpenPassport, onNaviga
             <div className="highway-line highway-2" />
 
             {filteredNodes.map((node) => {
-              const topPct = Math.max(15, Math.min(85, ((24.1 - node.lat) / 1.1) * 100));
-              const leftPct = Math.max(15, Math.min(85, ((node.lng - 85.1) / 0.5) * 100));
+              // India bounding box: lat 8–37°N, lng 68–98°E
+              // Map all 15 farms from 5 states onto the canvas correctly
+              const topPct = Math.max(5, Math.min(92, ((37 - node.lat) / (37 - 8)) * 100));
+              const leftPct = Math.max(5, Math.min(92, ((node.lng - 68) / (98 - 68)) * 100));
               const isSelected = selectedNode?.id === node.id;
               const isVet = node.id.startsWith("VET");
 
@@ -162,8 +164,8 @@ export const GisFarmMap: React.FC<GisFarmMapProps> = ({ onOpenPassport, onNaviga
             {incidents.filter((inc) => visibleFarmIds.has(inc.farmId)).slice(0, 8).map((inc, idx) => {
               const farmNode = nodes.find((n) => n.id === inc.farmId);
               if (!farmNode) return null;
-              const topPct = Math.max(10, Math.min(90, ((24.1 - farmNode.lat) / 1.1) * 100 + (idx % 3) * 3));
-              const leftPct = Math.max(10, Math.min(90, ((farmNode.lng - 85.1) / 0.5) * 100 + (idx % 2) * 4));
+              const topPct = Math.max(5, Math.min(92, ((37 - farmNode.lat) / (37 - 8)) * 100 + (idx % 3) * 2));
+              const leftPct = Math.max(5, Math.min(92, ((farmNode.lng - 68) / (98 - 68)) * 100 + (idx % 2) * 2));
               return (
                 <div
                   key={inc.id}
