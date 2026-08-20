@@ -10,7 +10,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { UserRole } from "../../types";
-import { useAuth, DEMO_CREDENTIALS } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 // Role tab configuration
 const ROLE_TABS: Array<{
