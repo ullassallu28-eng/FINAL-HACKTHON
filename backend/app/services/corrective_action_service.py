@@ -306,7 +306,7 @@ class CorrectiveActionService:
         return action
 
     @staticmethod
-    def _check_compliance_closure(db: Session, farm_id: str) -> None:
+    def _check_compliance_closure(db: Session, farm_id: str, user: User | None = None) -> None:
         open_actions = (
             db.query(CorrectiveAction)
             .filter(
@@ -318,7 +318,9 @@ class CorrectiveActionService:
             )
             .count()
         )
-        farm = FarmService.get_farm(db, farm_id)
+        farm = db.query(Farm).filter(Farm.id == farm_id).first()
+        if not farm:
+            return
         RiskEngine.update_farm_counters(db, farm)
         if open_actions == 0:
             passport = db.query(BiosecurityPassport).filter(BiosecurityPassport.farm_id == farm_id).first()

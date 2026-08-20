@@ -62,7 +62,8 @@ class FarmService:
         farm = db.query(Farm).filter(Farm.id == farm_id).first()
         if not farm:
             raise NotFoundError("Farm", farm_id)
-        FarmService.ensure_farm_access(farm, user)
+        if user is not None:
+            FarmService.ensure_farm_access(farm, user)
         return farm
 
     @staticmethod
