@@ -47,17 +47,16 @@ export const LoginPage: React.FC = () => {
   const { loginWithCredentials, logout } = useAuth();
 
   const [activeTab, setActiveTab] = useState<UserRole>("farmer");
-  const [email, setEmail] = useState(DEMO_CREDENTIALS.farmer.email);
-  const [password, setPassword] = useState(DEMO_CREDENTIALS.farmer.password);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleTabChange = (role: UserRole) => {
     setActiveTab(role);
     setError("");
-    // Pre-fill demo credentials for the selected role tab
-    setEmail(DEMO_CREDENTIALS[role].email);
-    setPassword(DEMO_CREDENTIALS[role].password);
+    setEmail("");
+    setPassword("");
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
