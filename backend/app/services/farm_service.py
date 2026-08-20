@@ -73,31 +73,9 @@ class FarmService:
             allowed = {a.farm_id for a in user.farm_assignments}
             if farm.id not in allowed:
                 raise ForbiddenError("You do not have access to this farm.")
-        elif user.role == UserRole.VETERINARIAN:
-            assigned = {a.farm_id for a in user.farm_assignments}
-            if assigned:
-                # Vet with explicit assignments → must be in that set.
-                if farm.id not in assigned:
-                    raise ForbiddenError(
-                        "You are not authorized to access this farm. "
-                        "Contact an administrator to be assigned to this farm."
-                    )
-            elif user.district_id:
-                # Vet with district but no explicit assignments → district scope.
-                if farm.district_id != user.district_id:
-                    raise ForbiddenError(
-                        "This farm is outside your assigned district scope."
-                    )
-            # Vet with neither explicit assignments nor district → block all.
-            elif not assigned and not user.district_id:
-                raise ForbiddenError(
-                    "Veterinarian account has no farm assignments or district configured."
-                )
-        elif user.role == UserRole.OFFICER:
-            if user.district_id and farm.district_id != user.district_id:
-                raise ForbiddenError(
-                    "This farm is outside your assigned district scope."
-                )
+        elif user.role in (UserRole.VETERINARIAN, UserRole.OFFICER):
+            # Veterinarians and Officers have surveillance authority across all monitored farms
+            return
 
     @staticmethod
     def create_farm(db: Session, payload: FarmCreate, user: User | None = None) -> Farm:

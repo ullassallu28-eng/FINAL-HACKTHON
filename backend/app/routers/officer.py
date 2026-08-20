@@ -33,16 +33,16 @@ router = APIRouter(prefix="/officer", tags=["Officer Dashboard"])
 
 @router.get("/stats", response_model=OfficerStatsResponse)
 def officer_stats(
+    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER))] = None,
 ):
     return OfficerService.get_stats(db, OfficerService.officer_district_scope(current_user))
 
 
 @router.get("/inspection-priority", response_model=list[FarmResponse])
 def inspection_priority(
+    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))] = None,
 ):
     district_id = OfficerService.officer_district_scope(current_user)
     farms = OfficerService.inspection_priority(db, district_id)
@@ -52,8 +52,8 @@ def inspection_priority(
 @router.get("/farms/{farm_id}/profile", response_model=OfficerFarmProfileResponse)
 def farm_profile(
     farm_id: str,
+    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))] = None,
 ):
     farm = FarmService.get_farm(db, farm_id, current_user)
     incidents = IncidentService.list_incidents(db, farm_id, current_user)
@@ -86,8 +86,8 @@ def farm_profile(
 @router.get("/farms/{farm_id}/detail", response_model=OfficerFarmDetailResponse)
 def farm_detail(
     farm_id: str,
+    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))] = None,
 ):
     farm = FarmService.get_farm(db, farm_id, current_user)
     incidents = IncidentService.list_incidents(db, farm_id, current_user)
@@ -149,9 +149,9 @@ def _inspection_to_response(db: Session, inspection) -> InspectionResponse:
 
 @router.get("/inspections", response_model=list[InspectionResponse])
 def list_inspections(
+    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))],
     farm_id: str | None = Query(default=None, alias="farmId"),
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))] = None,
 ):
     if farm_id:
         FarmService.get_farm(db, farm_id, current_user)
@@ -167,8 +167,8 @@ def list_inspections(
 @router.post("/inspections", response_model=InspectionResponse, status_code=201)
 def schedule_inspection(
     payload: InspectionCreate,
+    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.OFFICER, UserRole.VETERINARIAN))] = None,
 ):
     inspection = InspectionService.schedule(db, payload, current_user)
     return _inspection_to_response(db, inspection)

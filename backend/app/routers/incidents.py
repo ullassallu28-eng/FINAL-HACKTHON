@@ -23,9 +23,9 @@ router = APIRouter(prefix="/incidents", tags=["Incidents"])
 
 @router.get("", response_model=list[IncidentResponse])
 def list_incidents(
+    current_user: Annotated[User, Depends(get_current_user)],
     farm_id: str | None = Query(default=None, alias="farmId"),
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     incidents = IncidentService.list_incidents(db, farm_id, current_user)
     return [incident_to_response(i, db) for i in incidents]
@@ -34,8 +34,8 @@ def list_incidents(
 @router.get("/{incident_id}", response_model=IncidentResponse)
 def get_incident(
     incident_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     incident = IncidentService.get_incident(db, incident_id, current_user)
     return incident_to_response(incident, db)
@@ -43,8 +43,8 @@ def get_incident(
 
 @router.post("", response_model=IncidentResponse, status_code=201)
 async def create_incident(
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
     farm_id: str = Form(...),
     incident_type: str = Form(...),
     animal_type: str = Form(...),
@@ -75,8 +75,8 @@ async def create_incident(
 @router.post("/json", response_model=IncidentResponse, status_code=201)
 def create_incident_json(
     payload: IncidentCreate,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     incident = IncidentService.create_incident(db, payload, current_user)
     return incident_to_response(incident, db)
@@ -86,8 +86,8 @@ def create_incident_json(
 def verify_incident(
     incident_id: str,
     payload: IncidentVerifyRequest,
+    current_user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN, UserRole.OFFICER))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User | None, Depends(require_roles(UserRole.VETERINARIAN, UserRole.OFFICER))] = None,
 ):
     incident = IncidentService.verify_incident(db, incident_id, payload, current_user)
     return incident_to_response(incident, db)
@@ -96,8 +96,8 @@ def verify_incident(
 @router.get("/{incident_id}/recommended-actions", response_model=list[RecommendedActionResponse])
 def get_recommended_actions(
     incident_id: str,
+    current_user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN, UserRole.OFFICER))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User | None, Depends(require_roles(UserRole.VETERINARIAN, UserRole.OFFICER))] = None,
 ):
     return ActionPlanService.get_recommended(db, incident_id, current_user)
 
@@ -106,8 +106,8 @@ def get_recommended_actions(
 def send_action_plan(
     incident_id: str,
     payload: ActionPlanSendRequest,
+    current_user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN, UserRole.OFFICER))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User | None, Depends(require_roles(UserRole.VETERINARIAN, UserRole.OFFICER))] = None,
 ):
     created, count = ActionPlanService.send_plan(db, incident_id, payload, current_user)
     return ActionPlanSendResponse(

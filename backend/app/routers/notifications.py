@@ -16,9 +16,9 @@ router = APIRouter(prefix="/notifications", tags=["Notifications"])
 
 @router.get("", response_model=list[NotificationResponse])
 def list_notifications(
+    current_user: Annotated[User, Depends(get_current_user)],
     role: UserRole | None = Query(default=None),
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     effective_role = current_user.role if current_user else role
     notifications = NotificationService.list_notifications(db, effective_role)

@@ -17,10 +17,10 @@ router = APIRouter(prefix="/gis", tags=["GIS"])
 
 @router.get("/nodes", response_model=list[GisMapNodeResponse])
 def get_gis_nodes(
+    current_user: Annotated[User, Depends(get_current_user)],
     farm_type: str | None = Query(default=None, alias="farmType"),
     risk_level: str | None = Query(default=None, alias="riskLevel"),
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     district_id = OfficerService.officer_district_scope(current_user)
     nodes = GisService.get_map_nodes(db, farm_type, risk_level, district_id)
@@ -50,9 +50,9 @@ def get_gis_nodes(
 
 @router.get("/spatial-risk", response_model=SpatialRiskResponse)
 def spatial_risk(
+    current_user: Annotated[User, Depends(get_current_user)],
     farm_id: str = Query(alias="farmId"),
     radius_km: float = Query(default=15.0, alias="radiusKm"),
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     return GisService.spatial_risk(db, farm_id, radius_km, user=current_user)

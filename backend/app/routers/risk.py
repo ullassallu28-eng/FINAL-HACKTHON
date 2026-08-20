@@ -16,9 +16,9 @@ router = APIRouter(prefix="/risk", tags=["Risk Analytics"])
 
 @router.get("/factors", response_model=list[RiskFactorResponse])
 def get_risk_factors(
+    current_user: Annotated[User, Depends(get_current_user)],
     farm_id: str | None = Query(default=None, alias="farmId"),
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     if farm_id:
         farm = FarmService.get_farm(db, farm_id, current_user)
@@ -31,9 +31,9 @@ def get_risk_factors(
 @router.get("/farms/{farm_id}/history", response_model=list[RiskHistoryPoint])
 def get_risk_history(
     farm_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     days: int = Query(default=7, ge=1, le=90),
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     FarmService.get_farm(db, farm_id, current_user)
     history = RiskEngine.get_history(db, farm_id, days)
@@ -43,8 +43,8 @@ def get_risk_history(
 @router.get("/farms/{farm_id}/summary", response_model=RiskSummaryResponse)
 def get_risk_summary(
     farm_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     farm = FarmService.get_farm(db, farm_id, current_user)
     RiskEngine.recalculate_farm(db, farm)
@@ -56,9 +56,9 @@ def get_risk_summary(
 @router.get("/farms/{farm_id}/timeline", response_model=list[ScoreTimelineEvent])
 def get_score_timeline(
     farm_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     days: int = Query(default=30, ge=1, le=90),
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     FarmService.get_farm(db, farm_id, current_user)
     return RiskEngine.get_score_timeline(db, farm_id, days)
@@ -67,8 +67,8 @@ def get_score_timeline(
 @router.post("/farms/{farm_id}/recalculate", response_model=RiskSummaryResponse)
 def recalculate_risk(
     farm_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     farm = FarmService.get_farm(db, farm_id, current_user)
     RiskEngine.recalculate_farm(db, farm)

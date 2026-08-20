@@ -27,8 +27,8 @@ router = APIRouter(prefix="/farms", tags=["Farms"])
 
 @router.get("", response_model=list[FarmResponse])
 def list_farms(
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     farms = FarmService.list_farms(db, current_user)
     for farm in farms:
@@ -42,8 +42,8 @@ def list_farms(
 @router.post("", response_model=FarmResponse, status_code=201)
 def create_farm(
     payload: FarmCreate,
+    current_user: Annotated[User, Depends(require_roles(UserRole.FARMER, UserRole.OFFICER))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.FARMER, UserRole.OFFICER))] = None,
 ):
     farm = FarmService.create_farm(db, payload, current_user)
     return farm_to_response(farm)
@@ -52,8 +52,8 @@ def create_farm(
 @router.get("/{farm_id}", response_model=FarmResponse)
 def get_farm(
     farm_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     farm = FarmService.get_farm(db, farm_id, current_user)
     RiskEngine.recalculate_farm(db, farm)
@@ -66,8 +66,8 @@ def get_farm(
 def update_farm(
     farm_id: str,
     payload: FarmUpdate,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     farm = FarmService.update_farm(db, farm_id, payload, current_user)
     return farm_to_response(farm)
@@ -76,8 +76,8 @@ def update_farm(
 @router.get("/{farm_id}/passport", response_model=BiosecurityPassportResponse)
 def get_passport(
     farm_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     farm, passport, history = PassportService.get_passport(db, farm_id, current_user)
     return passport_to_response(farm, passport, history)
@@ -87,8 +87,8 @@ def get_passport(
 def submit_assessment(
     farm_id: str,
     payload: AssessmentCreate,
+    current_user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN, UserRole.OFFICER))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN, UserRole.OFFICER))] = None,
 ):
     return PassportService.submit_assessment(db, farm_id, payload, current_user)
 
@@ -96,8 +96,8 @@ def submit_assessment(
 @router.get("/{farm_id}/checklist", response_model=list[ChecklistItemResponse])
 def get_checklist(
     farm_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     items = ChecklistService.list_items(db, farm_id, current_user)
     return [
@@ -111,8 +111,8 @@ def update_checklist_item(
     farm_id: str,
     item_id: str,
     payload: ChecklistUpdate,
+    current_user: Annotated[User, Depends(require_roles(UserRole.FARMER))],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(require_roles(UserRole.FARMER))] = None,
 ):
     item = ChecklistService.update_item(db, farm_id, item_id, payload.completed, current_user)
     return ChecklistItemResponse(id=item.id, title=item.title, completed=item.completed, priority=item.priority)

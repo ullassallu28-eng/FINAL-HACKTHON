@@ -16,8 +16,8 @@ router = APIRouter(prefix="/health-records", tags=["Health Records"])
 @router.get("/farms/{farm_id}", response_model=list[HealthRecordResponse])
 def list_health_records(
     farm_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     records = HealthRecordService.list_records(db, farm_id, current_user)
     return [
@@ -42,8 +42,8 @@ def list_health_records(
 def create_health_record(
     farm_id: str,
     payload: HealthRecordCreate,
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    current_user: Annotated[User, Depends(get_current_user)] = None,
 ):
     record = HealthRecordService.create_record(db, farm_id, payload, current_user)
     return HealthRecordResponse(
@@ -64,8 +64,8 @@ def create_health_record(
 @router.post("/files/upload")
 async def upload_file(
     file: UploadFile,
+    _: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    _: Annotated[User, Depends(get_current_user)] = None,
 ):
     record = await save_upload_file(db, file)
     db.commit()
