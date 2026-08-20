@@ -2157,9 +2157,10 @@
 }
 
 .form-label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: #cbd5e1;
+  color: #1E293B;
+  margin-bottom: 4px;
 }
 
 .input-with-icon {
@@ -2172,9 +2173,48 @@
   position: absolute;
   left: 14px;
   color: #64748b;
+  pointer-events: none;
 }
 
-.form-input {
+.form-input, .form-textarea, select.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #94A3B8;
+  border-radius: 8px;
+  color: #0F172A;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-with-icon .form-input {
+  padding-left: 42px;
+}
+
+.form-input:focus, .form-textarea:focus, select.form-input:focus {
+  border-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+  color: #64748B;
+}
+
+select.form-input option {
+  background: #ffffff;
+  color: #0F172A;
+}
+
+/* Scoped dark styling specifically for Login Card */
+.login-card .form-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.login-card .form-input {
   width: 100%;
   padding: 12px 14px 12px 42px;
   background: rgba(255, 255, 255, 0.05);
@@ -2183,10 +2223,9 @@
   color: #ffffff;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s;
 }
 
-.form-input:focus {
+.login-card .form-input:focus {
   border-color: #10b981;
 }
 
