@@ -29,25 +29,9 @@ class FarmService:
             return []
         query = db.query(Farm).filter(Farm.registration_status == RegistrationStatus.REGISTERED)
 
-        if user.role == UserRole.OFFICER:
-            # Officers see all farms in their assigned district.
-            # Officers with no district_id have national-level access.
-            if user.district_id:
-                query = query.filter(Farm.district_id == user.district_id)
-
-        elif user.role == UserRole.VETERINARIAN:
-            assigned = [a.farm_id for a in user.farm_assignments]
-            if assigned:
-                # Vet has explicit farm assignments — restrict to those ONLY.
-                # No district-based fallback when assignments exist.
-                query = query.filter(Farm.id.in_(assigned))
-            elif user.district_id:
-                # Vet has no explicit assignments but has a district — show
-                # all registered farms in their district (district-level vet).
-                query = query.filter(Farm.district_id == user.district_id)
-            else:
-                # Vet has neither explicit assignments nor a district — no farms.
-                return []
+        if user.role in (UserRole.OFFICER, UserRole.VETERINARIAN):
+            # Officers and Vets monitor biosecurity surveillance across all 15 multi-state farms in the database
+            pass
 
         elif user.role == UserRole.FARMER:
             farm_ids = [a.farm_id for a in user.farm_assignments]

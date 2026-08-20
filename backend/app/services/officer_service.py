@@ -23,9 +23,14 @@ class GisService:
         farm_type: str | None = None,
         risk_level: str | None = None,
         district_id: str | None = None,
+        farm_ids: list[str] | None = None,
     ) -> list[dict]:
         query = db.query(Farm)
-        if district_id:
+        if farm_ids is not None:
+            if not farm_ids:
+                return []
+            query = query.filter(Farm.id.in_(farm_ids))
+        elif district_id:
             query = query.filter(Farm.district_id == district_id)
         if farm_type:
             query = query.filter(Farm.farm_type == farm_type)
@@ -141,14 +146,10 @@ class OfficerService:
     def officer_district_scope(user: User | None) -> str | None:
         """
         Returns the district_id to scope queries for officer/vet dashboards.
-        - Officers with a district_id: scoped to their district
-        - Officers without district_id: no scope restriction (national-level access)
-        - Veterinarians: scoped to their district_id
-        - None user: no scope (returns None, caller handles auth)
+        - Officers and Vets: return None for national surveillance across all 15 multi-state farms in DB
+        - None user: no scope
         """
-        if user is None:
-            return None
-        return user.district_id  # Both officers and vets use their district scope
+        return None
 
     @staticmethod
     def get_stats(db: Session, district_id: str | None = None) -> dict:

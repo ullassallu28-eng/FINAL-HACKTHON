@@ -22,8 +22,16 @@ def get_gis_nodes(
     risk_level: str | None = Query(default=None, alias="riskLevel"),
     db: Session = Depends(get_db),
 ):
-    district_id = OfficerService.officer_district_scope(current_user)
-    nodes = GisService.get_map_nodes(db, farm_type, risk_level, district_id)
+    if current_user.role in (UserRole.VETERINARIAN, UserRole.OFFICER):
+        # Vets and Government Officers see ALL 15 farms in the database across all states
+        farm_ids = None
+    elif current_user.role == UserRole.FARMER:
+        # Farmer sees ONLY their assigned farm(s)
+        farm_ids = [a.farm_id for a in current_user.farm_assignments]
+    else:
+        farm_ids = None
+
+    nodes = GisService.get_map_nodes(db, farm_type, risk_level, farm_ids=farm_ids)
     result = []
     for node in nodes:
         if "farm" in node:
